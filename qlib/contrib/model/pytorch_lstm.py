@@ -26,14 +26,17 @@ class LSTM(Model):
 
     Parameters
     ----------
-    d_feat : int
-        input dimension for each time step
-    metric: str
-        the evaluation metric used in early stop
-    optimizer : str
-        optimizer name
-    GPU : str
-        the GPU ID(s) used for training
+    d_feat: int, input dimension for each time step
+    optimizer : str,optimizer name, in ["adam", "gd"], default "adam"
+    GPU : str, the GPU ID(s) used for training, default 0
+    d_feat: The number of expected features in the input, default 6
+    hidden_size:The number of features in the hidden state, default 64
+    num_layers: Number of recurrent layers. E.g., setting num_layers=2 would mean stacking two LSTMs together to form a stacked LSTM, with the second LSTM taking in outputs of the first LSTM and computing the final results. Default: 1
+    dropout:float: If non-zero, introduces a Dropout layer on the outputs of each LSTM layer except the last layer, with dropout probability equal to dropout. Default: 0
+    n_epochs : Number of Epochs, default 200
+    lr: type = float, default = 0.001, range > 0
+    batch_size: Number of samples processed before the model is updated. default 2000.
+    early_stop: default 20
     """
 
     def __init__(

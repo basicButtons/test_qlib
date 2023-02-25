@@ -24,10 +24,13 @@ class LinearModel(Model):
     where `w` is the regression coefficient.
     """
 
-    OLS = "ols"
-    NNLS = "nnls"
-    RIDGE = "ridge"
-    LASSO = "lasso"
+    OLS = "ols"  # 最小二乘法
+    NNLS = "nnls"  # 非负约束最小二乘法
+    RIDGE = "ridge"  # 岭回归
+    LASSO = "lasso"  # Lasso回归
+    obj = {"estimator": "estimator in [`ols`, `nnls`, `ridge`, `lasso`]","alpha": "float and alpha is only supported in `ridge`&`lasso`","fit_intercept": "whether fit intercept(截距)"}
+    # alpha 只支持在 righe 和 lasso 之中 否则都是 0
+    # fit_intercept 是否保留截距
 
     def __init__(self, estimator="ols", alpha=0.0, fit_intercept=False):
         """
@@ -40,10 +43,12 @@ class LinearModel(Model):
         fit_intercept : bool
             whether fit intercept
         """
-        assert estimator in [self.OLS, self.NNLS, self.RIDGE, self.LASSO], f"unsupported estimator `{estimator}`"
+        assert estimator in [self.OLS, self.NNLS, self.RIDGE,
+                             self.LASSO], f"unsupported estimator `{estimator}`"
         self.estimator = estimator
 
-        assert alpha == 0 or estimator in [self.RIDGE, self.LASSO], f"alpha is only supported in `ridge`&`lasso`"
+        assert alpha == 0 or estimator in [
+            self.RIDGE, self.LASSO], f"alpha is only supported in `ridge`&`lasso`"
         self.alpha = alpha
 
         self.fit_intercept = fit_intercept
@@ -51,9 +56,11 @@ class LinearModel(Model):
         self.coef_ = None
 
     def fit(self, dataset: DatasetH, reweighter: Reweighter = None):
-        df_train = dataset.prepare("train", col_set=["feature", "label"], data_key=DataHandlerLP.DK_L)
+        df_train = dataset.prepare(
+            "train", col_set=["feature", "label"], data_key=DataHandlerLP.DK_L)
         if df_train.empty:
-            raise ValueError("Empty data from dataset, please check your dataset config.")
+            raise ValueError(
+                "Empty data from dataset, please check your dataset config.")
         if reweighter is not None:
             w: pd.Series = reweighter.reweight(df_train)
             w = w.values
@@ -72,7 +79,8 @@ class LinearModel(Model):
 
     def _fit(self, X, y, w):
         if self.estimator == self.OLS:
-            model = LinearRegression(fit_intercept=self.fit_intercept, copy_X=False)
+            model = LinearRegression(
+                fit_intercept=self.fit_intercept, copy_X=False)
         else:
             model = {self.RIDGE: Ridge, self.LASSO: Lasso}[self.estimator](
                 alpha=self.alpha, fit_intercept=self.fit_intercept, copy_X=False
@@ -97,5 +105,6 @@ class LinearModel(Model):
     def predict(self, dataset: DatasetH, segment: Union[Text, slice] = "test"):
         if self.coef_ is None:
             raise ValueError("model is not fitted yet!")
-        x_test = dataset.prepare(segment, col_set="feature", data_key=DataHandlerLP.DK_I)
+        x_test = dataset.prepare(
+            segment, col_set="feature", data_key=DataHandlerLP.DK_I)
         return pd.Series(x_test.values @ self.coef_ + self.intercept_, index=x_test.index)

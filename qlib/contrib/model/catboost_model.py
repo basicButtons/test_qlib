@@ -14,6 +14,15 @@ from ...model.interpret.base import FeatureInt
 from ...data.dataset.weight import Reweighter
 
 
+# loss: RMSE Logloss
+# learning_rate: 0.0421
+# subsample: 0.8789
+# max_depth: 6
+# num_leaves: 100
+# thread_count: 20
+# grow_policy: Lossguide
+# bootstrap_type: Poisson
+
 class CatBoostModel(Model, FeatureInt):
     """CatBoost Model"""
 

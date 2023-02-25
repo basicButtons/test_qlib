@@ -17,6 +17,8 @@ from qlib.tests.config import CSI300_BENCH, CSI300_GBDT_TASK
 
 
 if __name__ == "__main__":
+    print(CSI300_GBDT_TASK)
+    print(CSI300_BENCH)
 
     # use default data
     provider_uri = "~/.qlib/qlib_data/cn_data"  # target_dir
@@ -63,7 +65,7 @@ if __name__ == "__main__":
     # NOTE: This line is optional
     # It demonstrates that the dataset can be used standalone.
     example_df = dataset.prepare("train")
-    print(example_df.head())
+    print(example_df)
 
     # start exp
     with R.start(experiment_name="workflow"):
